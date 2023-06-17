@@ -1,0 +1,60 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+
+{% block title %}
+News
+{% endblock title %}
+
+{% block content %}
+<h2>Вы действительно хотите удалить данный текст?</h2>
+<table>
+    <thead>
+        <th>
+            Заголовок
+        </th>
+        <th>
+            Дата публикации
+        </th>
+        <th>
+            Автор
+        </th>
+        <th>
+            Категория
+        </th>
+        <th>
+            Рейтинг
+        </th>
+        <th>
+            Текст статьи
+        </th>
+    </thead>
+
+    <tr>
+        <td>
+            {{ post.header|title|censor }}
+        </td>
+        <td>
+            {{ post.created_datetime|date:'d.m.Y' }}
+        </td>
+        <td>
+            {{ post.author.user.username|title }}
+        </td>
+        <td>
+            {% for category in post.category.all %}
+                {{ category.name|title}}<br />
+            {% endfor %}
+        </td>
+        <td>
+            {{ post.rank|title }}
+        </td>
+        <td>
+            {{ post.text|truncatechars:50|censor }}
+        </td>
+    </tr>
+</table>
+
+<form method="POST">
+    {% csrf_token %}
+    <input type="submit" value="Подтвердить"></form>
+{% endblock content %}
