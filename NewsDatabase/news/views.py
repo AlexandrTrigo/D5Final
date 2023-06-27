@@ -1,5 +1,6 @@
 from django.views.generic import ListView, DetailView, \
     CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 from .models import Post
 from .filters import PostFilter
@@ -48,26 +49,38 @@ class PostSearch(ListView):
 #     context_object_name = 'post'
 
 
-class PostDetail(DetailView):
+class PostDetail(LoginRequiredMixin, DetailView):
     template_name = 'flatpages/post_detail.html'
     queryset = Post.objects.all()
 
 
-class PostCreateView(CreateView):
+class PostCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    raise_exception = True
     template_name = 'flatpages/post_create.html'
     form_class = PostForm
+    permission_required = ('news.add_post',)
 
 
-class PostUpdateView(UpdateView):
+# class PostUpdateView(UpdateView):
+#     template_name = 'flatpages/post_create.html'
+#     form_class = PostForm
+#
+#     def get_object(self, **kwargs):
+#         id = self.kwargs.get('pk')
+#         return Post.objects.get(pk=id)
+
+class PostUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     template_name = 'flatpages/post_create.html'
     form_class = PostForm
+    permission_required = ('news.change_post',)
 
     def get_object(self, **kwargs):
         id = self.kwargs.get('pk')
         return Post.objects.get(pk=id)
 
 
-class PostDeleteView(DeleteView):
+class PostDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     template_name = 'flatpages/post_delete.html'
     queryset = Post.objects.all()
+    permission_required = ('news.delete_post',)
     success_url = '/news/'

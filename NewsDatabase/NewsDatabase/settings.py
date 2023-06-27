@@ -14,7 +14,7 @@ SECRET_KEY = 'django-insecure-*uig%c-90vxc8_+ld0&+bq#ad$79fuyxd854(6edb$8c+k=#+x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
@@ -28,11 +28,17 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.flatpages',
-    'news',
-    'django_filters'
-]
 
-SITE_ID = 1
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.yandex',
+
+    'news',
+    'sign',
+    'accounts',
+    'django_filters',
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -42,7 +48,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware'
 ]
 
 ROOT_URLCONF = 'NewsDatabase.urls'
@@ -64,6 +69,15 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'NewsDatabase.wsgi.application'
+
+AUTHENTICATION_BACKENDS = [
+
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 
 # Database
@@ -123,3 +137,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATICFILES_DIRS = [
     BASE_DIR / "static"
 ]
+
+# Страница, на которую переправляют пользователя для авторизации,
+# и страница, куда он попадет после успешного входа на сайт
+# LOGIN_URL = 'sign/login/'
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/news'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_FORMS = {'signup': 'sign.forms.BasicSignupForm'}
+
+SITE_ID = 1
